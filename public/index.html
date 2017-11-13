@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>My Awesome Project</title>
+
+  <meta charset="utf-8">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css"
+    integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap-theme.min.css"
+    integrity="sha384-rHyoN1iRsVXV4nD0JutlnGaslCJuC7uwjduW9SVrLvRYooPp2bWYgmgJQIXwl/Sp" crossorigin="anonymous">
+</head>
+<body>
+
+    <script id="shader-fcol" type="x-shader/x-fragment"> 
+          precision mediump float;
+          varying vec4 v_color;
+
+          void main() {
+              gl_FragColor = v_color;
+          }
+  </script>
+  
+  <script id="shader-vcol" type="x-shader/x-vertex"> 
+          attribute vec2 a_position;
+          attribute vec4 a_color;
+          uniform vec2 u_resolution;
+          uniform mat3 u_matrix;
+          varying vec4 v_color;
+          
+          void main() {
+              // Multiply the position by the matrix.
+              vec2 position = (u_matrix * vec3(a_position, 1)).xy;
+              vec2 zeroToOne = position / u_resolution;
+              vec2 zeroToTwo = zeroToOne * 2.0;
+              vec2 clipspace = zeroToTwo - 1.0;
+              gl_Position = vec4(clipspace* vec2(1, -1), 0, 1);
+              v_color = a_color;
+          }
+  </script>
+
+
+
+  <script id="shader-ftex" type="x-shader/x-fragment"> 
+          precision mediump float;
+          varying vec2 v_texCoord;
+          uniform sampler2D u_texture;
+
+          void main() {
+              gl_FragColor = texture2D(u_texture, v_texCoord);
+          }
+  </script> 
+
+  <script id="shader-vtex" type="x-shader/x-vertex"> 
+          attribute vec2 a_position;
+          uniform vec2 u_resolution;
+          uniform mat3 u_matrix;
+
+          attribute vec2 a_texCoord;
+          varying vec2 v_texCoord;
+          
+          void main() {
+              // Multiply the position by the matrix.
+              vec2 position = (u_matrix * vec3(a_position, 1)).xy;
+              vec2 zeroToOne = position / u_resolution;
+              vec2 zeroToTwo = zeroToOne * 2.0;
+              vec2 clipspace = zeroToTwo - 1.0;
+              gl_Position = vec4(clipspace* vec2(1, -1), 0, 1);
+
+              v_texCoord = a_texCoord;
+          }
+  </script>
+
+<div id="root"></div>
+<script src="/js/bundle.js"></script>
+
+</body>
+</html>
