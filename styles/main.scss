@@ -1,0 +1,38 @@
+$header_height: 5%;
+$theme_color:#333;
+
+body, html{
+    height: 100%;
+}
+#root{
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+.main-header, .main-footer{
+    background-color: $theme_color;
+    width: 100%;
+    height: $header_height;
+    color: #DDD;
+
+    select {
+        color: black;
+    }
+}
+
+.wrapper{
+    display: block;
+    width: 100%;
+    height: 100%;
+}   
+
+.main-content{
+    background-color: rgba(240, 240, 240, 0.698);
+    width: 100%;
+    height: 90%;
+
+    .timelineWrapper{
+        height: 30px;
+        width: 100%;
+    }
+}
