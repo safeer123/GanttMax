@@ -1,34 +1,85 @@
 import React from "react";
 import { connect } from "react-redux";
+import { SplitButton, MenuItem } from 'react-bootstrap';
+//import axios from 'axios';
+import { getScenarios, selectScenario, getScenarioData } from '../../actions'
+import { bindActionCreators } from 'redux';
 
 class Header extends React.Component {
   constructor(props) {
     super(props);
+    this.scenarioSelectionHandler = this.scenarioSelectionHandler.bind(this);
+  }
+
+  scenarioSelectionHandler(id) {
+    //console.log("selected:" + id);
+    const scenarios = this.props.scenarioList;
+    if (scenarios) {
+      let selectedScenario = scenarios.filter(s => s.ScenarioID === id)[0];
+      this.props.selectScenario(selectedScenario);
+      this.props.getScenarioData(id);
+    }
   }
 
   createScenarioDropDown() {
     return (
-      <select>
+      <SplitButton bsSize="small" bsStyle="primary" title="scenario #" id="scenarioDropdown" onSelect={this.scenarioSelectionHandler}>
         {this.props.scenarioList.map(scenario => {
           return (
-            <option value={scenario.scenarioId} key={scenario.scenarioId}>
-              {scenario.scenarioId}
-            </option>
+            <MenuItem eventKey={scenario.ScenarioID} key={scenario.ScenarioID}>
+              {scenario.ScenarioID}
+            </MenuItem>
           );
         })}
-      </select>
+      </SplitButton>
     );
   }
 
-  render() {
-    return <div className="main-header">Select Scenario: {this.createScenarioDropDown()}</div>;
+  // Create Scenario details to display
+  createScenarioDetails() {
+    return this.props.activeScenario ?
+      (<b> SID: {this.props.activeScenario.ScenarioID}, NAME: {this.props.activeScenario.Name} </b>) :
+      null;
   }
+
+  componentWillMount() {
+    this.props.getScenarios();
+  }
+
+  render() {
+    let headerItems = null;
+
+    const scenarios = this.props.scenarioList;
+    if (!scenarios || scenarios === "pending" || scenarios === "error") {
+      headerItems = null;
+    }
+    else {
+      headerItems = <div className="header-items">
+        Select: {this.createScenarioDropDown()}
+        {this.createScenarioDetails()}
+      </div>
+    }
+
+    return <div className="main-header">
+      {headerItems}
+    </div>;
+  }
+
 }
 
-function mapStateToProps({ scenarioList }) {
+function mapStateToProps({ scenarioList, activeScenario }) {
   return {
-    scenarioList: scenarioList
+    scenarioList,
+    activeScenario,
   };
 }
 
-export default connect(mapStateToProps)(Header);
+function matchDispatchToProps(dispatch) {
+  return bindActionCreators({
+    getScenarios,
+    selectScenario,
+    getScenarioData,
+  }, dispatch);
+}
+
+export default connect(mapStateToProps, matchDispatchToProps)(Header);

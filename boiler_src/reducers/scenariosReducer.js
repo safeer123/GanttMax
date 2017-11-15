@@ -1,20 +1,26 @@
-export default function scenariosReducer()
+import {actionTypes} from '../actions/constants';
+
+export default function scenariosReducer(state = null, action)
 {
-    return [
+    // console.log(action.type);
+
+    switch(action.type)
+    {
+        case actionTypes.GET_SCENARIOS + "_PENDING":
         {
-            scenarioId: "28341",
-            scheduleStartTime: "2017-11-12 11:35:44",
-            scheduleEndTime: "2017-11-20 10:01:00",
-        },
+            return "pending";
+            break;
+        }
+        case actionTypes.GET_SCENARIOS + "_FULFILLED":
         {
-            scenarioId: "33321",
-            scheduleStartTime: "2017-11-21 01:35:04",
-            scheduleEndTime: "2017-11-30 10:20:40",
-        },
+            return action.payload.data;
+            break;
+        }
+        case actionTypes.GET_SCENARIOS + "_REJECTED":
         {
-            scenarioId: "34567",
-            scheduleStartTime: "2017-12-04 21:11:22",
-            scheduleEndTime: "2017-12-18 10:31:03",
-        },
-    ];
+            return "error";
+            break;
+        }
+    }
+    return state;
 }

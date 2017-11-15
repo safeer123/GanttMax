@@ -30,6 +30,9 @@ export class GanttChartLayer extends Base {
         };
 
         this.canvas.onmousemove = function (e) {
+            
+            if(!this.appTimeTransform) return;
+
             var mouseX = e.offsetX; 
             var mouseY = e.offsetY;
 
@@ -92,6 +95,7 @@ export class GanttChartLayer extends Base {
 
         this.canvas.onmousedown = function(e)
         {
+            if(!this.appTimeTransform) return;
             //console.log("Mouse Down");
             //console.log(e);
 
@@ -111,6 +115,7 @@ export class GanttChartLayer extends Base {
 
         this.canvas.onmouseup = function(e)
         {
+            if(!this.appTimeTransform) return;
             //console.log("Mouse Up");
             //console.log(e);
 
@@ -129,6 +134,7 @@ export class GanttChartLayer extends Base {
 
         this.canvas.onmouseout = function(e)
         {
+            if(!this.appTimeTransform) return;
             //console.log("Mouse Out");
             //console.log(e);
 
@@ -142,6 +148,7 @@ export class GanttChartLayer extends Base {
 
         this.canvas.onmousewheel = function(e)
         {
+            if(!this.appTimeTransform) return;
             // console.log(e.wheelDelta);
             var offset = Utils.cumulativeOffset(this.wrapperElem);
             this.appTimeTransform.applyZoom(0.05, e.wheelDelta, e.clientX - offset.left);
@@ -152,9 +159,8 @@ export class GanttChartLayer extends Base {
     }
 
     updateBuffers() {
-        
-        let scenario1 = this.dataObject.input;
-        this.assignmentPlans = scenario1.AssignmentPlan;
+        this.objectList = [];
+        this.assignmentPlans = this.dataObject.plan;
 
         var gl = this.gl;
 
@@ -191,10 +197,11 @@ export class GanttChartLayer extends Base {
         this.hashLookup.clear();
 
         this.assignmentPlans.forEach((assignmentPlan, i) => {
-            let busId = assignmentPlan.BusId;
+            let busId = assignmentPlan.BusID;
+            let busName = assignmentPlan.BusName;
             yBottom = yTop + chartHeight;
 
-            assignmentPlan.Assignments.forEach((assignment, j)=>{
+            assignmentPlan.Plan.forEach((assignment, j)=>{
                 let startDate = Utils.strToDate(assignment.ScheduleStartTime);
                 let endDate = Utils.strToDate(assignment.ScheduleEndTime);
                 let xLeft = this.canvas.width * this.timeWindow.getPositionOnTimeScale(startDate);
@@ -202,7 +209,7 @@ export class GanttChartLayer extends Base {
                 let xRight = this.canvas.width * this.timeWindow.getPositionOnTimeScale(endDate);
                 if (isNaN(xRight)) xRight = this.canvas.width;
 
-                var assignmentObj = new Geometry.VesselChart(assignment, xLeft, yTop, xRight, yBottom);
+                var assignmentObj = new Geometry.AssignmentBox(assignment, xLeft, yTop, xRight, yBottom);
                 this.objectList.push(assignmentObj);
 
                 this.hashLookup.insertObj(assignmentObj);
@@ -304,7 +311,7 @@ export class GanttChartLayer extends Base {
     renderTexts() {
         this.canvas2D.ctx.clearRect(0, 0, this.canvas2D.canvas.width, this.canvas2D.canvas.height);
         for (var i in this.objectList) {
-            if (this.objectList[i] instanceof Geometry.VesselChart) {
+            if (this.objectList[i] instanceof Geometry.AssignmentBox) {
                 this.objectList[i].renderTexts(this.canvas2D.ctx);
             }
         }

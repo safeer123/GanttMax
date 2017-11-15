@@ -37,14 +37,14 @@ export default class AppController
 
     init(dataObj)
     {
-        if(!dataObj) dataObj = this.scenarioList["scenario1"];
+        if(!dataObj) return;
 
         window.onwheel = function(){ return false; }
 
         this.dataObject = dataObj;
 
-        var startDate = new Date( Utils.strToDate(this.dataObject.input.StartTime) );
-        var endDate = new Date( Utils.strToDate(this.dataObject.input.EndTime) );
+        var startDate = new Date( Utils.strToDate(this.dataObject.scenario.ScenarioStartTime) );
+        var endDate = new Date( Utils.strToDate(this.dataObject.scenario.ScenarioEndTime) );
         var timeWindow = new Utils.TimeWindow( startDate, endDate );
         timeWindow.setOffset(0.03);
 
@@ -74,6 +74,13 @@ export default class AppController
         {
             this.layers[i].render();
         }
+    }
+
+    clearAll()
+    {
+        this.layers.forEach(layer => {
+            layer.clear();
+        });
     }
 
     loadInputScenarios()
