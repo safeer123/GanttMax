@@ -83,6 +83,16 @@ Utils.strToDate = function(dateStr)
 	return new Date(dateStr);
 }
 
+Utils.toClockTime = function(dateStr)
+{
+    return dateStr.split("T")[1].split(":").splice(0,2).join(":");
+}
+
+Utils.getTimeDiffInMin = function(date1, date2)
+{
+	return ( date2.getTime()-date1.getTime() )/60000;
+}
+
 Utils.isInsideBox = function(boundingBox, point)
 {
     if( point.x >= boundingBox.left &&

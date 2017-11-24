@@ -15,6 +15,7 @@ export class TimelineLayer extends Base {
         this.positionAttrib = this.shaderProgram.attribs["a_position"].index;
         this.colorAttrib = this.shaderProgram.attribs["a_color"].index;
         this.matrixUniform = this.shaderProgram.uniforms["u_matrix"].index;
+        this.resolutionUniform = this.shaderProgram.uniforms["u_resolution"].index;
 
         this.timeLabels = [];
 
@@ -40,7 +41,9 @@ export class TimelineLayer extends Base {
 
         this.bgLinesList = [];
 
-        var dateVar = new Date(this.timeWindow.startTime);
+        let timeWindow = this.appTimeTransform.timeWindow;
+
+        var dateVar = new Date(timeWindow.startTime);
         dateVar.setMinutes(0);
         dateVar.setSeconds(0);
         dateVar.setHours(0);
@@ -49,8 +52,8 @@ export class TimelineLayer extends Base {
 
         this.timeLabels.length = 0;
 
-        while (dateVar < this.timeWindow.endTime) {
-            var xPos = this.timeWindow.getPositionOnTimeScale(dateVar);
+        while (dateVar < timeWindow.endTime) {
+            var xPos = timeWindow.getPositionOnTimeScale(dateVar);
             if (!isNaN(xPos)) {
                 let xVal = xPos * this.canvas.width;
                 var yStartVal, yEndVal, yLabel;
@@ -127,7 +130,8 @@ export class TimelineLayer extends Base {
 
         this.canvas2D.ctx.clearRect(0, 0, this.canvas2D.canvas.width, this.canvas2D.canvas.height);
         for (var i in this.timeLabels) {
-            Geometry.TEXT.renderAt(this.canvas2D.ctx, this.timeLabels[i].text, this.timeLabels[i].x, this.timeLabels[i].y, this.timeLabels[i].color);
+            let newX = this.appTimeTransform.transformX(this.timeLabels[i].x);
+            Geometry.TEXT.renderAt(this.canvas2D.ctx, this.timeLabels[i].text, newX, this.timeLabels[i].y, this.timeLabels[i].color);
         }
     }
 
@@ -153,7 +157,8 @@ export class TimelineLayer extends Base {
 
         // Add transformation matrix here
         // TODO: Update it only if necessary
-        gl.uniformMatrix3fv(this.matrixUniform, false, this.appTimeTransform.matrix);
+        gl.uniformMatrix3fv(this.matrixUniform, false, this.appTimeTransform.getMatrix(false, true));
+        gl.uniform2f( this.resolutionUniform, this.canvas.width, this.canvas.height);
 
         gl.drawArrays(gl.LINES, 0, bgLineBuffer.numItems);
     }

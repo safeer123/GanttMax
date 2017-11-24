@@ -42,7 +42,7 @@ export class Base {
 
         this.bgLinesList = [];
 
-        var lineColor = [88 / 256, 109 / 256, 122 / 256, 0.8];
+        var lineColor = [30 / 256, 30 / 256, 30 / 256, 1];
         for (let i in this.timeLabels) {
             var newLine = new Geometry.LineSegment(this.timeLabels[i].x, 0, this.timeLabels[i].x, this.canvas.height);
             newLine.color = lineColor;
@@ -68,6 +68,20 @@ export class Base {
         }
         if (this.canvas2D) {
             this.canvas2D.ctx.clearRect(0, 0, this.canvas2D.canvas.width, this.canvas2D.canvas.height);
+        }
+    }
+
+    onResize()
+    {
+        this.clear();
+        this.canvas.width = this.wrapperElem.clientWidth;
+        this.canvas.height = this.wrapperElem.clientHeight;
+        this.gl.viewport(0, 0, this.canvas.width, this.canvas.height);
+        this.canvas2D.canvas.width = this.wrapperElem.clientWidth;
+        this.canvas2D.canvas.height = this.wrapperElem.clientHeight;
+        if(this.bgLineCount)
+        {
+            delete(this.bgLineCount);
         }
     }
 

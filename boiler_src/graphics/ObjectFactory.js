@@ -1,5 +1,6 @@
 import { m3 } from './m3';
-import { AssignmentBoxConfig } from './config';
+import { AssignmentBoxConfig, General } from './config';
+import { Utils } from './AppUtils';
 
 export let Geometry = {}
 
@@ -100,6 +101,58 @@ Geometry.ScheduleRect = class {
     }
 }
 
+Geometry.Label = class {
+    constructor(wrappedObj, left, top, right, bottom) {
+        this.wrappedObj = wrappedObj;
+        this.box = { left, top, right, bottom };
+    }
+
+    renderTexts(ctx) {
+        var box1 = this.getBoundingBox(); 
+        box1 = Geometry.TEXT.appTimeTransform.transformBox(box1);
+
+        ctx.fillStyle = "rgba(200, 200, 200, 1)";
+        ctx.font = "10px " + General.fontFamily;
+        Geometry.TEXT.render(ctx, this.wrappedObj.labelText.toString(), Geometry.Alignment.Center, box1, 3);
+    }
+
+    getBoundingBox() {
+        return {
+            top: this.box.top,
+            left: this.box.left,
+            bottom: this.box.bottom,
+            right: this.box.right,
+        }
+    }
+}
+
+Geometry.SideLabel = class {
+    constructor(wrappedObj, left, top, right, bottom) {
+        this.wrappedObj = wrappedObj;
+        this.box = { left, top, right, bottom };
+    }
+
+    renderTexts(ctx) {
+        var box1 = this.getBoundingBox(); 
+        box1 = Geometry.TEXT.appTimeTransform.transformBox(box1, true);
+
+        ctx.fillStyle = "#064a62";
+        ctx.fillRect(box1.left,box1.top,box1.right-box1.left,box1.bottom-box1.top);
+        ctx.fillStyle = "rgba(244, 244, 244, 1)";
+        ctx.font = "12px " + General.fontFamily;
+        Geometry.TEXT.render(ctx, this.wrappedObj.busName, Geometry.Alignment.Center, box1, 3);
+    }
+
+    getBoundingBox() {
+        return {
+            top: this.box.top,
+            left: this.box.left,
+            bottom: this.box.bottom,
+            right: this.box.right,
+        }
+    }
+}
+
 Geometry.AssignmentBox = class {
 
     constructor(wrappedObj, left, top, right, bottom) {
@@ -115,25 +168,19 @@ Geometry.AssignmentBox = class {
     }
 
     renderTexts(ctx) {
-        return;
-        ctx.fillStyle = "rgba(0, 0, 0, 1)";
-        ctx.font = "10px Arial";
+        ctx.fillStyle = "rgba(10, 10, 10, 1)";
+        ctx.font = "10px " + General.fontFamily;
         var box1 = this.rectangle1.getBoundingBox();
-        Geometry.TEXT.render(ctx, this.wrappedObj.vessel.VesselName, Geometry.Alignment.TopLeft, box1, 3);
+        box1 = Geometry.TEXT.appTimeTransform.transformBox(box1);
+        Geometry.TEXT.render(ctx, this.wrappedObj.ScheduleCode, Geometry.Alignment.TopCenter, box1, 5);
+        Geometry.TEXT.render(ctx, this.wrappedObj.TravelTime, Geometry.Alignment.BottomCenter, box1, 5);
+
+        Geometry.TEXT.render(ctx, this.wrappedObj.OriginCityCode, Geometry.Alignment.TopLeft, box1, 5);
+        Geometry.TEXT.render(ctx, this.wrappedObj.DestCityCode, Geometry.Alignment.TopRight, box1, 5);
 
 
-        var products = this.wrappedObj.nomination.NominationItems;
-        for (var i in products) {
-            ctx.fillStyle = "rgba(255, 255, 255, 1)";
-            ctx.font = "11px Verdana";
-            box1 = this.productRects[i * 2].getBoundingBox();
-            Geometry.TEXT.render(ctx, products[i].ProductCode, Geometry.Alignment.RightCenter, box1, 3);
-
-            ctx.fillStyle = "rgba(0, 0, 0, 1)";
-            ctx.font = "11px Verdana";
-            box1 = this.productRects[i * 2 + 1].getBoundingBox();
-            Geometry.TEXT.render(ctx, products[i].Tonnage.toString(), Geometry.Alignment.RightCenter, box1, 3);
-        }
+        Geometry.TEXT.render(ctx, Utils.toClockTime(this.wrappedObj.ScheduleStartTime), Geometry.Alignment.BottomLeft, box1, 5);
+        Geometry.TEXT.render(ctx, Utils.toClockTime(this.wrappedObj.ScheduleEndTime), Geometry.Alignment.BottomRight, box1, 5);
     }
 
     toArrayBuffer() {
@@ -239,7 +286,7 @@ Geometry.AssetLabelPanel = class {
     }
 
     render(ctx) {
-        ctx.font = "12px Arial";
+        ctx.font = "12px " + General.fontFamily;
         ctx.fillStyle = 'rgba(66, 88, 102, 1)';
         ctx.fillRect(0, 0, this.panelWidth, ctx.canvas.height);
 
@@ -286,6 +333,8 @@ Geometry.Alignment = {
     BottomRight: 3,
     Center: 4,
     RightCenter: 5,
+    TopCenter: 6,
+    BottomCenter: 7,
 }
 
 Geometry.TextRenderer = class {
@@ -296,43 +345,100 @@ Geometry.TextRenderer = class {
 
     renderAt(ctx, text, x, y, color) {
         var textWidth = ctx.measureText(text).width;
-        let x0 = this.appTimeTransform.transformX(x) - textWidth / 2;
+        let x0 = x - textWidth / 2;
         let y0 = y + 4;
-        ctx.font = "13px Arial";
+        ctx.font = "13px " + General.fontFamily;
         ctx.fillStyle = color;
         ctx.fillText(text, Math.round(x0), Math.round(y0));
     }
 
     render(ctx, text, alignment, box, offset) {
-        var boxLeft = this.appTimeTransform.transformX(box.left);
-        var boxRight = this.appTimeTransform.transformX(box.right);
+        text = text.toString().trim();
 
         var textWidth = ctx.measureText(text).width;
-        var toBeShortened = (textWidth >= boxRight - boxLeft);
-
-        if (toBeShortened) {
-            text = text.substring(0, 10) + "...";
-            textWidth = ctx.measureText(text).width;
-        }
 
         switch (alignment) {
             case Geometry.Alignment.TopLeft:
                 {
-                    let x0 = boxLeft + offset;
+                    let toBeShortened = (textWidth >= (box.right - box.left - 40) / 2);
+                    if (toBeShortened) {
+                        return;
+                    }
+                    let x0 = box.left + offset;
                     let y0 = box.top + offset + 10;
                     ctx.fillText(text, Math.round(x0), Math.round(y0));
                 }
                 break;
             case Geometry.Alignment.TopRight:
                 {
-                    let x0 = boxRight - textWidth - offset;
-                    let y0 = box.top + offset + 9;
+                    let toBeShortened = (textWidth >= (box.right - box.left - 40) / 2);
+                    if (toBeShortened) {
+                        return;
+                    }
+                    let x0 = box.right - textWidth - offset;
+                    let y0 = box.top + offset + 10;
+                    ctx.fillText(text, Math.round(x0), Math.round(y0));
+                }
+                break;
+            case Geometry.Alignment.BottomRight:
+                {
+                    let toBeShortened = (textWidth >= (box.right - box.left - 40) / 2);
+                    if (toBeShortened) {
+                        return;
+                    }
+                    let x0 = box.right - textWidth - offset;
+                    let y0 = box.bottom - offset;
+                    ctx.fillText(text, Math.round(x0), Math.round(y0));
+                }
+                break;
+            case Geometry.Alignment.BottomLeft:
+                {
+                    let toBeShortened = (textWidth >= (box.right - box.left - 40) / 2);
+                    if (toBeShortened) {
+                        return;
+                    }
+                    let x0 = box.left + offset;
+                    let y0 = box.bottom - offset;
                     ctx.fillText(text, Math.round(x0), Math.round(y0));
                 }
                 break;
             case Geometry.Alignment.RightCenter:
                 {
-                    let x0 = boxRight - textWidth - offset;
+                    let x0 = box.right - textWidth - offset;
+                    let y0 = (box.top + box.bottom) / 2 + 9 / 2;
+                    ctx.fillText(text, Math.round(x0), Math.round(y0));
+                }
+                break;
+            case Geometry.Alignment.TopCenter:
+                {
+                    let toBeShortened = (textWidth >= box.right - box.left - 5);
+                    if (toBeShortened) {
+                        return;
+                    }
+                    let x0 = 0.5 * (box.right + box.left) - textWidth / 2;
+                    let y0 = box.top + offset + 10;
+                    ctx.fillText(text, Math.round(x0), Math.round(y0));
+                }
+                break;
+            case Geometry.Alignment.BottomCenter:
+                {
+                    let toBeShortened = (textWidth >= box.right - box.left - 5);
+                    if (toBeShortened) {
+                        return;
+                    }
+                    let x0 = 0.5 * (box.right + box.left) - textWidth / 2;
+                    let y0 = box.bottom - offset;
+                    ctx.fillText(text, Math.round(x0), Math.round(y0));
+                }
+                break;
+            case Geometry.Alignment.Center:
+                {
+                    let toBeShortened = (textWidth >= box.right - box.left - 5);
+                    if (toBeShortened) {
+                        return;
+                    }
+
+                    let x0 = 0.5 * (box.right + box.left) - textWidth / 2;
                     let y0 = (box.top + box.bottom) / 2 + 9 / 2;
                     ctx.fillText(text, Math.round(x0), Math.round(y0));
                 }

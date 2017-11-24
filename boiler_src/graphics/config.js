@@ -6,7 +6,11 @@ const TimelineConfig = {
 }
 
 const AssignmentBoxConfig = {
-    bgcolor: [216/256, 216/256, 216/256, 0.7], // Allowed: Array [r,g,b,a] all values between 0-1
+    bgcolor: [216/256, 216/256, 216/256, 0.9], // Allowed: Array [r,g,b,a] all values between 0-1
 }
 
-export { TimelineConfig, AssignmentBoxConfig }
+const General = {
+    fontFamily: "Open Sans",
+}
+
+export { TimelineConfig, AssignmentBoxConfig, General }

@@ -171,6 +171,7 @@ export class Canvas{
         wrapperDiv.appendChild(this.canvas);
 
         this.canvas.style.position = "absolute";
+        this.canvas.style.left = "0";
         this.canvas.style.zIndex = 1;
         this.canvas.width = wrapperDiv.clientWidth;
         this.canvas.height = wrapperDiv.clientHeight;
@@ -202,6 +203,7 @@ export class Canvas2D{
         wrapperDiv.appendChild(this.canvas);
 
         this.canvas.style.position = "absolute";
+        this.canvas.style.left = "0";
         this.canvas.style.zIndex = 1;
         this.canvas.width = wrapperDiv.clientWidth;
         this.canvas.height = wrapperDiv.clientHeight;

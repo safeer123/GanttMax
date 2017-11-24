@@ -31,8 +31,6 @@ export default class AppController
         newTooltip.hide();
 
         this.layers[1].tooltip = newTooltip;
-
-        this.loadInputScenarios();
     }
 
     init(dataObj)
@@ -45,8 +43,6 @@ export default class AppController
 
         var startDate = new Date( Utils.strToDate(this.dataObject.scenario.ScenarioStartTime) );
         var endDate = new Date( Utils.strToDate(this.dataObject.scenario.ScenarioEndTime) );
-        var timeWindow = new Utils.TimeWindow( startDate, endDate );
-        timeWindow.setOffset(0.03);
 
         this.appTimeTransform = new TimeTransform(startDate, endDate, this.canvasObj2.canvas.width);
         
@@ -55,7 +51,6 @@ export default class AppController
         for(let i in this.layers)
         {
             // set params
-            this.layers[i].timeWindow = timeWindow;
             this.layers[i].appTimeTransform = this.appTimeTransform;
             this.layers[i].dataObject = this.dataObject;
 
@@ -83,33 +78,15 @@ export default class AppController
         });
     }
 
-    loadInputScenarios()
+    onResize()
     {
-        this.scenarioList = {
-            "scenario1" : { input: Scenario1}
-        };
-        
-        return;
-        this.selectScenarioInput = document.getElementById("select-scenario");
-        
-        for(let scenario in this.scenarioList)
-        {
-            var option = document.createElement('option');
-            option.text = option.value = scenario;
-            this.selectScenarioInput.add(option, 0);
-        }
-
-        this.selectScenarioInput.onchange = function()
-        {
-            var value = this.selectScenarioInput.value;
-            console.log(value);
-
-            this.init( this.scenarioList[value] );
-
-        }.bind(this);
+        this.layers.forEach(layer => {
+            layer.onResize();
+        });
     }
 
-
-    // TODO: 
-    // Input Output methods to be implemented
+    setTooltipHandler(tooltipHandler)
+    {
+        this.layers[1].tooltipHandler = tooltipHandler;
+    }
 }
