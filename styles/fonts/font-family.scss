@@ -1,0 +1,17 @@
+// font file is downloaded from https://google-webfonts-helper.herokuapp.com/fonts/open-sans?subsets=latin 
+$font-path: './fonts/open-sans-v15-latin';
+$font-file-name: 'open-sans-v15-latin-regular';
+$fallback-src: url("#{$font-path}/#{$font-file-name}.eot");
+$src:
+  url("#{$font-path}/#{$font-file-name}.eot?#iefix") format('embedded-opentype'),
+  url("#{$font-path}/#{$font-file-name}.woff") format('woff'),
+  url("#{$font-path}/#{$font-file-name}.ttf") format('truetype'),
+  url("#{$font-path}/#{$font-file-name}.svg?##{$font-file-name}") format('svg');
+
+@font-face {
+  font-family: 'Open Sans';
+  src:  $fallback-src;
+  src:  $src;
+    font-style: normal;
+    font-weight: 400; 
+}

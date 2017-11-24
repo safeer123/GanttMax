@@ -1,8 +1,13 @@
+@import './fonts/font-family.scss';
+
 $header_height: 7%;
-$theme_color:#36486b;
+$theme_color:#064a62;
+$main_font_family: "Open Sans";
 
 body, html{
     height: 100%;
+    overflow: hidden;
+    font-family: "Open Sans";
 }
 #root{
     display: block;
@@ -16,31 +21,40 @@ body, html{
     color: #DDD;
 }
 
-.main-footer {
-    height: $header_height/2;
+.main-header {
+    border-bottom: 1px solid #777;
 }
 
-.header-items{
+.main-footer {
+    height: $header_height / 2;
+}
+
+.header-items {
     margin-left: 50px;
     padding: 10px;
+    float: left;
 }
 
-.wrapper{
+.header-right-content {
+    float: right;
+}
+
+.wrapper {
     display: block;
     width: 100%;
     height: 100%;
-}   
+}
 
 .main-content{
-    background-color: rgba(240, 240, 240, 0.698);
+    background-color: #03384a;
     width: 100%;
-    height: 86%;
+    height: calc(100% - #{$header_height});
     position: relative;
 
     .canvas-wrapper{
         height: 95%;
         width: 100%;
-        background-color: #AAA;
+        background-color: #03384a;
     }
 
     .timeline-wrapper{
@@ -59,4 +73,18 @@ body, html{
         font-weight: bold;
         color: #666;
     }
+}
+
+.custom-popover{
+    font-family: $main_font_family;
+    position: absolute;
+    background-color: #EEE;
+    box-shadow: 0 5px 10px rgba(0, 0, 0, 0.2);
+    border: 1px solid #CCC;
+    border-radius: 3px;
+    z-index: 2;
+    pointer-events: none;
+    margin-left: -5px;
+    margin-top: 5px;
+    padding: 10px;
 }
