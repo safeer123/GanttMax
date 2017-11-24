@@ -35,6 +35,15 @@ module.exports = {
       {
         test: /\.css$/,
         loaders: ['style', 'css'],
+      },
+      {
+        test: /\.json$/,
+        loader: 'json-loader'
+      },
+      {
+        test: /\.(eot|svg|ttf|woff|woff2)$/,
+        exclude: /node_modules/,
+        loader: 'file-loader'
       }
     ],
   },

@@ -29,6 +29,8 @@
   "license": "MIT",
   "dependencies": {
     "axios": "^0.17.1",
+    "file-loader": "^1.1.5",
+    "json-loader": "^0.5.7",
     "react": "^15.4.2",
     "react-bootstrap": "^0.30.7",
     "react-dom": "^15.4.2",
