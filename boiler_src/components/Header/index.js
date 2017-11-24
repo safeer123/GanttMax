@@ -12,7 +12,7 @@ class Header extends React.Component {
   }
 
   scenarioSelectionHandler(id) {
-    //console.log("selected:" + id);
+    // console.log("selected:" + id);
     const scenarios = this.props.scenarioList;
     if (scenarios) {
       let selectedScenario = scenarios.filter(s => s.ScenarioID === id)[0];
@@ -25,9 +25,11 @@ class Header extends React.Component {
     return (
       <SplitButton bsSize="small" bsStyle="primary" title="scenario #" id="scenarioDropdown" onSelect={this.scenarioSelectionHandler}>
         {this.props.scenarioList.map(scenario => {
+          let scenarioName = scenario.Name;
+          if(scenarioName.length > 25) scenarioName = scenarioName.substr(0, 25) + "..";
           return (
             <MenuItem eventKey={scenario.ScenarioID} key={scenario.ScenarioID}>
-              {scenario.ScenarioID}
+              {scenario.ScenarioID} - {scenarioName}
             </MenuItem>
           );
         })}
@@ -38,8 +40,17 @@ class Header extends React.Component {
   // Create Scenario details to display
   createScenarioDetails() {
     return this.props.activeScenario ?
-      (<b> SID: {this.props.activeScenario.ScenarioID}, NAME: {this.props.activeScenario.Name} </b>) :
+      (<b> Scenario ID: {this.props.activeScenario.ScenarioID} | Name: {this.props.activeScenario.Name} </b>) :
       null;
+  }
+
+  createBusCount() {
+    if (this.props.scenarioData && this.props.scenarioData.data) {
+      return <div className="header-items header-right-content">
+        Bus Count: {this.props.scenarioData.data.length}
+      </div>;
+    }
+    return null;
   }
 
   componentWillMount() {
@@ -62,15 +73,17 @@ class Header extends React.Component {
 
     return <div className="main-header">
       {headerItems}
+      {this.createBusCount()}
     </div>;
   }
 
 }
 
-function mapStateToProps({ scenarioList, activeScenario }) {
+function mapStateToProps({ scenarioList, activeScenario, scenarioData }) {
   return {
     scenarioList,
     activeScenario,
+    scenarioData,
   };
 }
 

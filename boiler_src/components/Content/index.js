@@ -1,10 +1,37 @@
 import React from "react";
 import AppController from '../../graphics/AppController';
+import CustomPopover from '../Overlay/CustomPopover';
 import { connect } from "react-redux";
 
 class Content extends React.Component {
   constructor(props) {
     super(props);
+    this.tooltipHandler = this.tooltipHandler.bind(this);
+
+    this.state = {
+      tooltipVisible: false,
+      tooltipAssignment: null,
+      tooltipPosition: null,
+    }
+
+    this.resizeHandler = this.resizeHandler.bind(this);
+  }
+
+  resizeHandler() {
+    // console.log(this.canvasWrapper.clientWidth, this.canvasWrapper.clientHeight);
+    if (this.appController) {
+      this.appController.onResize();
+
+      if (this.props.scenarioData) {
+        const data = {
+          plan: this.props.scenarioData.data,
+          scenario: this.props.activeScenario
+        };
+
+        // init with data and integrate
+        this.appController.init(data);
+      }
+    }
   }
 
   displayLoaderOnNeed() {
@@ -13,10 +40,22 @@ class Content extends React.Component {
       null;
   }
 
+  // Tooltip handler
+  tooltipHandler(visibility, assignment, position) {
+    this.setState({
+      tooltipVisible: visibility,
+      tooltipAssignment: assignment,
+      tooltipPosition: position,
+    });
+  }
+
   componentDidMount() {
-    console.log("Main content loading starts..");
+    console.log("Initialize graphics controller..");
     let rootDiv = document.getElementById("root");
     this.appController = new AppController(rootDiv, this.canvasWrapper, this.timelineWrapper);
+    this.appController.setTooltipHandler(this.tooltipHandler);
+
+    window.addEventListener('resize', this.resizeHandler);
   }
 
   componentWillReceiveProps(nextProps) {
@@ -39,12 +78,21 @@ class Content extends React.Component {
     }
   }
 
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.resizeHandler);
+  }
+
   render() {
     return (
       <div className="main-content">
         <div className="canvas-wrapper" ref={elm => (this.canvasWrapper = elm)}></div>
         <div className="timeline-wrapper" ref={elm => (this.timelineWrapper = elm)}></div>
         {this.displayLoaderOnNeed()}
+        <CustomPopover
+          visible={this.state.tooltipVisible}
+          assignment={this.state.tooltipAssignment}
+          position={this.state.tooltipPosition}
+        />
       </div>
     );
   }
