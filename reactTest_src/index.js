@@ -1,44 +1,52 @@
 import React from "react";
 import ReactDOM from "react-dom";
 
-const styles = {
-  fontFamily: "sans-serif",
-  textAlign: "center"
-};
+import {Button, Overlay} from 'react-bootstrap';
 
-class MyComponent extends React.Component {
+class CustomPopover extends React.Component{
   render() {
-    console.log(this.props);
-    return <h2> {this.props.text}</h2>;
-  }
+    return (
+      <div
+        style={{
+          ...this.props.style,
+          position: 'absolute',
+          backgroundColor: '#EEE',
+          boxShadow: '0 5px 10px rgba(0, 0, 0, 0.2)',
+          border: '1px solid #CCC',
+          borderRadius: 3,
+          marginLeft: -5,
+          marginTop: 5,
+          padding: 10,
+          left: 50,
+          top: 100,
+        }}
+      >
+        <strong>Holy guacamole!</strong> 
+        <br/>Check this info.
+        <br/>Info 2.
+      </div>
+    );
+  },
 }
 
-class MyClock extends React.Component {
-  constructor(props) {
-    super(props);
-    this.state = { time: new Date() };
-  }
+const Example = React.createClass({
+  getInitialState() {
+    return { show: true };
+  },
 
-  componentDidMount()
-  {
-    this.timerId = setInterval(()=>this.setState({time: new Date()}), 1000);
-  }
-
-  componentWillUnmount()
-  {
-      clearInterval(this.timerId);
-  }
+  toggle() {
+    this.setState({ show: !this.state.show });
+  },
 
   render() {
-    return <h3>{this.state.time.toLocaleTimeString()}</h3>;
-  }
-}
+    return (
+      <div style={{ height: 100, position: 'relative' }}>
+          <CustomPopover />
+      </div>
+    );
+  },
+});
 
-const App = ({ name }) => (
-  <div style={styles}>
-    <MyComponent text="Some text here :) " />
-    <MyClock time={new Date()} />
-  </div>
-);
+const mountNode = document.getElementById("root");
 
-ReactDOM.render(<App name="safeer" />, document.getElementById("app"));
+ReactDOM.render(<Example />, mountNode);
