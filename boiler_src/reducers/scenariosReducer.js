@@ -1,4 +1,5 @@
 import {actionTypes} from '../actions/constants';
+import scenariosDummyData from './responseBackup/scenarios.json';
 
 export default function scenariosReducer(state = null, action)
 {
@@ -19,6 +20,11 @@ export default function scenariosReducer(state = null, action)
         case actionTypes.GET_SCENARIOS + "_REJECTED":
         {
             return "error";
+            break;
+        }
+        case actionTypes.GET_SCENARIOS:
+        {
+            return scenariosDummyData;
             break;
         }
     }

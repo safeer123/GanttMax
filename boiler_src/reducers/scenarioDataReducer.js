@@ -1,4 +1,5 @@
 import {actionTypes} from '../actions/constants';
+var dummyScenarioData = require('./responseBackup/scenario2.json');
 
 export default function scenarioDataReducer(state = null, action)
 {
@@ -20,6 +21,12 @@ export default function scenarioDataReducer(state = null, action)
         case actionTypes.FETCH_SCENARIO_DATA + "_REJECTED":
         {
             out.status = "rejected";
+            break;
+        }
+        case actionTypes.FETCH_SCENARIO_DATA:
+        {
+            out.status = "fulfilled";
+            out.data = dummyScenarioData;
             break;
         }
     }

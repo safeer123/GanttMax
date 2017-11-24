@@ -1,0 +1,14 @@
+[
+    {
+        "ScenarioID": 18,
+        "Name": "Optimized Bus Schedule",
+        "ScenarioStartTime": "2017-11-05T00:00:00.000Z",
+        "ScenarioEndTime": "2017-11-12T00:00:00.000Z"
+    },
+    {
+        "ScenarioID": 19,
+        "Name": "Optimized Bus Schedule",
+        "ScenarioStartTime": "2017-11-05T00:00:00.000Z",
+        "ScenarioEndTime": "2017-11-12T00:00:00.000Z"
+    }
+]
