@@ -9,4 +9,9 @@ const apiUrls = {
     GET_SCENARIOS: 'http://localhost:8090/api/scenarios',
 }
 
-export { actionTypes, apiUrls }
+
+const otherConst = {
+    dummyAPIresponseEnabled: false,
+}
+
+export { actionTypes, apiUrls, otherConst }

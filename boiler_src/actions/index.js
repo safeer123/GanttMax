@@ -1,8 +1,16 @@
-import { actionTypes, apiUrls } from './constants';
+import { actionTypes, apiUrls, otherConst } from './constants';
 import axios from 'axios';
 
 export const getScenarios = () => {
     //console.log("getScenarios");
+
+    // expects dummy data
+    if (otherConst.dummyAPIresponseEnabled) {
+        return {
+            type: actionTypes.GET_SCENARIOS,
+        };
+    }
+
     return dispatch => {
         dispatch({
             type: actionTypes.GET_SCENARIOS,
@@ -15,6 +23,15 @@ export const getScenarios = () => {
 
 export const getScenarioData = (id) => {
     //console.log("getScenarioData");
+
+    // expects dummy data
+    if (otherConst.dummyAPIresponseEnabled) {
+        return {
+            type: actionTypes.FETCH_SCENARIO_DATA,
+            payload: null,
+        };
+    }
+
     return dispatch => {
         dispatch({
             type: actionTypes.FETCH_SCENARIO_DATA,
@@ -26,7 +43,7 @@ export const getScenarioData = (id) => {
 }
 
 export const selectScenario = (id) => {
-    console.log("selectedScenario");
+    // console.log("selectedScenario: " + id);
     return {
         type: actionTypes.SELECT_SCENARIO,
         payload: id,
