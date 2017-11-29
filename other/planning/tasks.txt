@@ -1,0 +1,38 @@
+
+DONE -->  add new shader Pair for 3d
+DONE -->  Get and use/learn the best m4 library
+Create Triangle3D, Derive Quad3D from Triangle 3D
+add folder named ShaderFactory // Building Base
+	- config.js
+		- list of { program ID, shaderIds, attribs, uniforms, (texture) }
+	- constants.js
+		- Program ID Enum
+	- GLInitializer.js
+		- Takes list of program Ids to initialize with
+		- shaderPrograms[id] = { ...programCongig }
+		- initLocations
+	- Canvas.js
+		- constructor(programIdList)
+
+
+===========================================
+
+
+moving shaders into static text files and read from it
+
+
+
+Create first 3d scene with camera
+
+Figure out how to convert 16byte float color to 4byte(4 unsigned_byte)
+	- Did not work out we need more time
+	
+	
+Object Detection:
+Entire problem will come down to solving ==> Given a line ( Point + Vector ) which side of the box it will hit next
+OR short grid path from (i1, j1) to (i2, j2)
+slope m = j2-j1 / i2-i1
+line j-j1 / i-i1  =   m
+iterate from i1 to i2 find j as ceil and floor both
+
+M = inverse(projectionViewMatrix) p11=M*p1 p22=M*p2 first Object hitting this line

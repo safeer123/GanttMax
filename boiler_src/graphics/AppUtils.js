@@ -43,6 +43,17 @@ Utils.createBufferObj = function()
     }
 }
 
+Utils.packColorArray = function(color)
+{
+    var buffer = new ArrayBuffer(4);
+    var byteView = new Uint8Array(buffer);
+    byteView[0] = color[0];
+    byteView[1] = color[1];
+    byteView[2] = color[2];
+    byteView[3] = color[3];
+    return new Float32Array(buffer)[0];
+}
+
 Utils.TimeWindow = class TimeWindow
 {
     constructor(startTime, endTime)

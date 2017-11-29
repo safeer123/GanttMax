@@ -15,6 +15,28 @@
 </head>
 <body>
 
+    <script id="shader-fcol3d" type="x-shader/x-fragment"> 
+        precision mediump float;
+        varying vec4 v_color;
+
+        void main() {
+            gl_FragColor = v_color;
+        }
+    </script>
+
+    <script id="shader-vcol3d" type="x-shader/x-vertex"> 
+        attribute vec3 a_position;
+        attribute vec4 a_color;
+        uniform mat4 u_matrix;
+        varying vec4 v_color;
+        
+        void main() {
+            gl_Position = u_matrix * vec4(a_position, 1);
+            v_color = a_color;
+        }
+    </script>
+
+
     <script id="shader-fcol" type="x-shader/x-fragment"> 
           precision mediump float;
           varying vec4 v_color;
@@ -22,9 +44,9 @@
           void main() {
               gl_FragColor = v_color;
           }
-  </script>
+    </script>
   
-  <script id="shader-vcol" type="x-shader/x-vertex"> 
+    <script id="shader-vcol" type="x-shader/x-vertex"> 
           attribute vec2 a_position;
           attribute vec4 a_color;
           uniform vec2 u_resolution;
@@ -40,7 +62,7 @@
               gl_Position = vec4(clipspace* vec2(1, -1), 0, 1);
               v_color = a_color;
           }
-  </script>
+    </script>
 
 
 

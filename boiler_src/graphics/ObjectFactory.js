@@ -1,4 +1,3 @@
-import { m3 } from './m3';
 import { AssignmentBoxConfig, General } from './config';
 import { Utils } from './AppUtils';
 
@@ -275,6 +274,40 @@ Geometry.Quad = class {
     }
 }
 
+Geometry.Quad3D = class {
+    constructor(p1, p2, p3, p4) {
+        this.p1 = p1; this.p2 = p2; this.p3 = p3; this.p4 = p4;
+        this.color = [72 / 256, 162 / 256, 219 / 256, 1];
+    }
+
+    toArrayBuffer() {
+        function toVertices(p1, p2, p3, p4, color) {
+            var dataObj = new Geometry.VertexData();
+            var posArray = [
+                p1.x, p1.y, p1.z, 
+                p2.x, p2.y, p2.z, 
+                p3.x, p3.y, p3.z,
+                p1.x, p1.y, p1.z, 
+                p3.x, p3.y, p3.z, 
+                p4.x, p4.y, p4.z,
+            ]; 
+
+            var vertexNum = parseInt(posArray.length / 3, 10);
+
+            // Pos vertices and Color in the buffer
+            for (var i = 0; i < vertexNum; i++) {
+                dataObj.rectData.push(posArray[3 * i + 0]);
+                dataObj.rectData.push(posArray[3 * i + 1]);
+                dataObj.rectData.push(posArray[3 * i + 2]);
+                dataObj.rectData.push.apply(dataObj.rectData, color);
+            }
+            dataObj.rectItems += vertexNum;
+            return dataObj;
+        }
+        return toVertices(this.p1, this.p2, this.p3, this.p4, this.color);
+    }
+}
+
 Geometry.AssetLabelPanel = class {
     constructor() {
         this.labelList = [];
@@ -445,10 +478,6 @@ Geometry.TextRenderer = class {
                 break;
             default: break;
         }
-    }
-
-    _transform(x, y) {
-        return m3.multiplyVec(this.appTimeTransform.matrix, [x, y, 1]);
     }
 }
 

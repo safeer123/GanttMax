@@ -104,7 +104,13 @@ export class ShaderFactory
 
     initShaders() {
         var gl = this.gl;
+
+        this.createShaderProgram(PROGRAMS.COLOR_SHADER_3D, "shader-vcol3d", "shader-fcol3d");
         
+        this.shaderPrograms[PROGRAMS.COLOR_SHADER_3D].registerAttrib(this.gl, "a_position", "vec2");
+        this.shaderPrograms[PROGRAMS.COLOR_SHADER_3D].registerAttrib(this.gl, "a_color", "vec4");
+        this.shaderPrograms[PROGRAMS.COLOR_SHADER_3D].registerUniform(this.gl, "u_matrix", "mat3");
+         
         //======== COLOR SHADER PROGRAM
         this.createShaderProgram(PROGRAMS.COLOR_SHADER, "shader-vcol", "shader-fcol");
 
@@ -161,6 +167,7 @@ WebGLProgram.prototype.registerUniform = function(gl, uniformName, type)
 export let PROGRAMS = {
     COLOR_SHADER: 0,
     TEXTURE_SHADER: 1,
+    COLOR_SHADER_3D: 2,
 }
 
 export class Canvas{

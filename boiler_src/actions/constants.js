@@ -11,7 +11,7 @@ const apiUrls = {
 
 
 const otherConst = {
-    dummyAPIresponseEnabled: false,
+    dummyAPIresponseEnabled: true,
 }
 
 export { actionTypes, apiUrls, otherConst }
